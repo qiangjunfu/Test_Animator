@@ -6,7 +6,7 @@ public class PlayerCtrl : MonoBehaviour
 {
     [SerializeField] int id = 1;
     [SerializeField ] Actions actions ;
-    [SerializeField] private string enemyState;
+    [SerializeField] private NPCState enemyState;
 
     public int Id { get => id; set => id = value; }
 
@@ -15,19 +15,19 @@ public class PlayerCtrl : MonoBehaviour
     #region MyRegion
     private void OnEnable()
     {
-        MessageManager.AddListener<int, int>(GameEventType.EnemyStateChange, OnEnemyStateChange);
+        MessageManager.AddListener<NPCState, int>(GameEventType.EnemyStateChange, OnEnemyStateChange);
 
         //if (actions == null) actions = GetComponent<Actions>();
         //actions.AddAnimationEvent(actions.GetAnimator(), "Fire SniperRifle", "StartFireEvent", 0);
     }
     private void OnDisable()
     {
-        MessageManager.RemoveListener<int, int>(GameEventType.EnemyStateChange, OnEnemyStateChange);
+        MessageManager.RemoveListener<NPCState, int>(GameEventType.EnemyStateChange, OnEnemyStateChange);
 
         //actions.CleanAllEvent(actions.GetAnimator());
     }
 
-    private void OnEnemyStateChange(int arg1, int arg2)
+    private void OnEnemyStateChange(NPCState arg1, int arg2)
     {
         // 1:Stay 
         // 2:Walk 
@@ -42,44 +42,30 @@ public class PlayerCtrl : MonoBehaviour
         if (actions == null) { actions = GetComponent<Actions>(); }
 
 
-        string aniName = "";
+        enemyState = arg1;
         switch (arg1)
         {
-            case 1:
-                aniName = "Stay";
+            case NPCState.Stay:
                 actions.Stay();
                 break;
-            case 2:
-                aniName = "Walk";
+            case NPCState.Patrol:
                 actions.Walk();
                 break;
-            case 3:
-                aniName = "Run";
+            case NPCState.Pursue:
                 actions.Run();
                 break;
-            case 4:
-                aniName = "Sitting";
+            case NPCState.Attack:
+                actions.Attack();
                 break;
-            case 5:
-                aniName = "Jump";
+            case NPCState.Damage:
                 break;
-            case 6:
-                aniName = "Aiming";
-                break;
-            case 7:
-                aniName = "Attack";
-                break;
-            case 8:
-                aniName = "Damage";
-                break;
-            case 9:
-                aniName = "Death Reset";
+            case NPCState.Flee:
+                actions.Run();
                 break;
             default:
                 break;
         }
 
-        enemyState = aniName;
     }
 
     private void StartFireEvent()
@@ -101,4 +87,17 @@ public class PlayerCtrl : MonoBehaviour
     {
         
     }
+}
+
+
+
+public enum NPCState
+{
+    Stay =1 ,
+    Patrol ,
+    Pursue , 
+    Attack , 
+    Damage, 
+    Flee,
+
 }

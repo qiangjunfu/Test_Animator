@@ -3,6 +3,7 @@ using BehaviorDesigner.Runtime.Tasks;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static BehaviorDesigner.Runtime.Tasks.Movement.Patrol__2;
 
 
 public class AttackTarget : Action
@@ -11,11 +12,14 @@ public class AttackTarget : Action
     public SharedFloat attackDis = 2;
 
 
+    private NPCState currentState = NPCState.Attack ;
+
+
     public override void OnStart() 
     {
-        Debug.LogFormat("开始攻击:  " + target.Value.name);
+        Debug.LogFormat("开始攻击: {0} , {1}", currentState, target.Value.name);
         int id = this.gameObject.GetComponent<PlayerCtrl>().Id;
-        MessageManager.Broadcast<int, int>(GameEventType.EnemyStateChange, 7, id);
+        MessageManager.Broadcast<NPCState, int>(GameEventType.EnemyStateChange, currentState, id);
     }
 
     public override TaskStatus OnUpdate()

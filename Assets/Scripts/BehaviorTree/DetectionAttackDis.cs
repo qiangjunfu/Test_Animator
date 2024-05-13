@@ -3,6 +3,7 @@ using BehaviorDesigner.Runtime.Tasks;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static BehaviorDesigner.Runtime.Tasks.Movement.Patrol__2;
 
 
 public class DetectionAttackDis : Conditional
@@ -12,9 +13,13 @@ public class DetectionAttackDis : Conditional
     float distance = 0;
 
 
-    public override void OnAwake()
+    private NPCState currentState;
+    private bool stateChanged = true; // 标志位，用来确保状态改变只打印一次
+
+
+    public override void OnStart()
     {
-        
+        base.OnStart();
     }
 
 

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static BehaviorDesigner.Runtime.Tasks.Movement.Patrol__2;
 
 
 namespace BehaviorDesigner.Runtime.Tasks.Movement
@@ -24,6 +25,11 @@ namespace BehaviorDesigner.Runtime.Tasks.Movement
         // The position of the target at the last frame
         private Vector3 targetPosition;
 
+
+        public NPCState currentState = NPCState.Pursue;
+
+
+
         public override void OnStart()
         {
             base.OnStart();
@@ -32,9 +38,10 @@ namespace BehaviorDesigner.Runtime.Tasks.Movement
             SetDestination(Target());
 
 
-            Debug.LogFormat("开始追击:  " + m_Target .Value.name);
+            Debug.LogFormat("开始追击: {0} , {1}" , currentState, m_Target .Value.name);
             int id = this.gameObject.GetComponent<PlayerCtrl>().Id;
-            MessageManager.Broadcast<int, int>(GameEventType.EnemyStateChange, 3, id);
+            MessageManager.Broadcast<NPCState, int>(GameEventType.EnemyStateChange, currentState, id);
+
         }
 
         // Pursue the destination. Return success once the agent has reached the destination.

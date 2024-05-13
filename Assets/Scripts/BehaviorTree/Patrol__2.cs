@@ -23,13 +23,7 @@ namespace BehaviorDesigner.Runtime.Tasks.Movement
 
 
 
-        public enum NPCState
-        {
-            Patrol,
-            Stay
-        }
-
-        private NPCState currentState;
+        public NPCState currentState = NPCState.Patrol;
         private bool stateChanged = true; // 标志位，用来确保状态改变只打印一次
 
 
@@ -57,7 +51,7 @@ namespace BehaviorDesigner.Runtime.Tasks.Movement
             currentState = NPCState.Patrol;
             Debug.LogFormat("开始巡逻:  " + currentState);
             int id = this.gameObject.GetComponent<PlayerCtrl>().Id;
-            MessageManager.Broadcast<int, int>(GameEventType.EnemyStateChange, 2, id);
+            MessageManager.Broadcast<NPCState, int>(GameEventType.EnemyStateChange, currentState, id);
         }
 
         // Patrol around the different waypoints specified in the waypoint array. Always return a task status of running. 
@@ -98,17 +92,8 @@ namespace BehaviorDesigner.Runtime.Tasks.Movement
                 stateChanged = false; // Reset the state changed flag
 
                 int id = this.gameObject.GetComponent<PlayerCtrl>().Id;
-                switch (currentState)
-                {
-                    case NPCState.Patrol:
-                        MessageManager.Broadcast<int, int>(GameEventType.EnemyStateChange, 2, id);
-                        break;
-                    case NPCState.Stay:
-                        MessageManager.Broadcast<int, int>(GameEventType.EnemyStateChange, 1, id);
-                        break;
-                    default:
-                        break;
-                }
+                MessageManager.Broadcast<int, int>(GameEventType.EnemyStateChange, (int)currentState, id);
+      
             }
 
 
